@@ -10,9 +10,8 @@
     body {
       margin: 0;
       padding: 0;
-      background: url('Rosario%20en%20llamas.jpeg') no-repeat center center fixed;
-      background-size: cover;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: black;
+      font-family: Arial, sans-serif;
       color: white;
       display: flex;
       flex-direction: column;
@@ -23,14 +22,12 @@
     }
 
     h1 {
-      font-size: 3em;
+      font-size: 36px;
       margin-bottom: 20px;
-      font-family: 'Impact', sans-serif;
-      text-shadow: 2px 2px 5px black;
     }
 
     input, button {
-      padding: 12px;
+      padding: 10px;
       font-size: 18px;
       margin: 10px;
       border-radius: 5px;
@@ -39,27 +36,43 @@
     }
 
     input {
-      width: 200px;
-      background-color: rgba(255, 255, 255, 0.9);
+      background-color: white;
       color: black;
     }
 
     button {
-      background-color: rgba(0, 0, 0, 0.8);
-      color: white;
+      background-color: white;
+      color: black;
       cursor: pointer;
     }
 
     button:hover {
-      background-color: rgba(0, 0, 0, 0.6);
+      background-color: #ddd;
     }
 
     #resultado {
       margin-top: 20px;
       font-size: 20px;
-      background-color: rgba(0, 0, 0, 0.6);
+      color: white;
+    }
+
+    #formAgregar {
+      display: none;
+      margin-top: 30px;
+      background-color: rgba(255, 255, 255, 0.1);
       padding: 20px;
       border-radius: 10px;
+    }
+
+    #toggleForm {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background-color: transparent;
+      border: 2px solid white;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 5px;
     }
   </style>
 </head>
@@ -69,8 +82,16 @@
   <button onclick="buscar()">Buscar</button>
   <div id="resultado"></div>
 
+  <button id="toggleForm" onclick="toggleAgregar()">Agregar entrada</button>
+  <div id="formAgregar">
+    <h3>Agregar nueva entrada</h3>
+    <input type="text" id="nuevoNumero" placeholder="Número de entrada"><br>
+    <input type="text" id="nuevoNombre" placeholder="Apellido y Nombre"><br>
+    <input type="text" id="nuevoDNI" placeholder="DNI"><br>
+    <button onclick="agregarEntrada()">Guardar</button>
+  </div>
+
   <script>
-    // Configuración de Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyBVW1OvkYXl5djQW8X4cTCY-hTQGvq28N0",
       authDomain: "prueba1-ceb44.firebaseapp.com",
@@ -81,19 +102,14 @@
       measurementId: "G-YN5SL8Z5KY"
     };
 
-    // Inicializar Firebase
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // Función para buscar la entrada
     async function buscar() {
       const numero = document.getElementById('entrada').value.trim();
       const resultado = document.getElementById('resultado');
-
       try {
-        const docRef = db.collection("entradas").doc(numero);
-        const doc = await docRef.get();
-
+        const doc = await db.collection("entradas").doc(numero).get();
         if (doc.exists) {
           const data = doc.data();
           resultado.innerHTML = `
@@ -104,9 +120,38 @@
         }
       } catch (error) {
         resultado.innerHTML = "<p style='color:red;'>Error al buscar los datos.</p>";
-        console.error("Error buscando entrada:", error);
+        console.error(error);
+      }
+    }
+
+    function toggleAgregar() {
+      const form = document.getElementById('formAgregar');
+      form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    }
+
+    async function agregarEntrada() {
+      const numero = document.getElementById('nuevoNumero').value.trim();
+      const nombre = document.getElementById('nuevoNombre').value.trim();
+      const dni = document.getElementById('nuevoDNI').value.trim();
+      if (!numero || !nombre || !dni) {
+        alert("Por favor, completá todos los campos.");
+        return;
+      }
+      try {
+        await db.collection("entradas").doc(numero).set({
+          "APELLIDO Y NOMBRE": nombre,
+          "DNI": dni
+        });
+        alert("Entrada agregada correctamente.");
+        document.getElementById('nuevoNumero').value = "";
+        document.getElementById('nuevoNombre').value = "";
+        document.getElementById('nuevoDNI').value = "";
+      } catch (error) {
+        alert("Error al agregar entrada.");
+        console.error(error);
       }
     }
   </script>
 </body>
 </html>
+
