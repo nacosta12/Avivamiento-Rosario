@@ -1,0 +1,94 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Rosario en Llamas - Buscador de Entradas</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background-image: url('WhatsApp Image 2025-06-28 at 22.20.44.jpeg');
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .contenedor {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            color: #c62828;
+        }
+
+        input, button {
+            padding: 12px;
+            font-size: 16px;
+            margin: 10px;
+            border-radius: 6px;
+            border: 1px solid #aaa;
+        }
+
+        button {
+            background-color: #c62828;
+            color: white;
+            cursor: pointer;
+            border: none;
+        }
+
+        button:hover {
+            background-color: #a41515;
+        }
+
+        #resultado {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="contenedor">
+        <h1>Rosario en Llamas - Buscador de Entradas</h1>
+        <input type="text" id="entrada" placeholder="Ingresá tu número de entrada">
+        <button onclick="buscar()">Buscar</button>
+        <div id="resultado"></div>
+    </div>
+
+    <script>
+        const datos = {
+            "1501": {
+                "APELLIDO Y NOMBRE": "acosta",
+                "DNI": "44444444"
+            },
+            "1502": {
+                "APELLIDO Y NOMBRE": "gonzalez",
+                "DNI": "12345678"
+            }
+        };
+
+        function buscar() {
+            const numero = document.getElementById('entrada').value.trim();
+            const resultado = document.getElementById('resultado');
+
+            if (datos[numero]) {
+                resultado.innerHTML = `
+                    <p><strong>Apellido y Nombre:</strong> ${datos[numero]['APELLIDO Y NOMBRE']}</p>
+                    <p><strong>DNI:</strong> ${datos[numero]['DNI']}</p>`;
+            } else {
+                resultado.innerHTML = "<p style='color:red;'>Número de entrada no encontrado.</p>";
+            }
+        }
+    </script>
+</body>
+</html>
