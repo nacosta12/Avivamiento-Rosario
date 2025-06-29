@@ -2,139 +2,110 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
   <title>Buscador de Entradas - Rosario en Llamas</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   <style>
     body {
       margin: 0;
       padding: 0;
-      font-family: 'Poppins', sans-serif;
-      background-image: url('Rosario en llamas.jpeg');
+      background: url('Rosario%20en%20llamas.jpeg') no-repeat center center fixed;
       background-size: cover;
-      background-position: center;
-      background-attachment: fixed;
-      height: 100vh;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: white;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      color: white;
-    }
-    .container {
-      background-color: rgba(0, 0, 0, 0.6);
-      padding: 30px;
-      border-radius: 15px;
-      width: 90%;
-      max-width: 450px;
-      box-shadow: 0 0 18px rgba(0,0,0,0.8);
+      height: 100vh;
       text-align: center;
     }
+
     h1 {
+      font-size: 3em;
       margin-bottom: 20px;
-      font-weight: 600;
-      font-size: 26px;
-      letter-spacing: 1px;
+      font-family: 'Impact', sans-serif;
+      text-shadow: 2px 2px 5px black;
     }
+
     input, button {
-      width: 100%;
       padding: 12px;
-      font-size: 16px;
-      margin-bottom: 10px;
+      font-size: 18px;
+      margin: 10px;
+      border-radius: 5px;
       border: none;
-      border-radius: 8px;
-      font-family: 'Poppins', sans-serif;
+      outline: none;
     }
+
     input {
-      background-color: #fff;
-      color: #000;
+      width: 200px;
+      background-color: rgba(255, 255, 255, 0.9);
+      color: black;
     }
+
     button {
-      background-color: #ff3c00;
+      background-color: rgba(0, 0, 0, 0.8);
       color: white;
-      font-weight: bold;
       cursor: pointer;
-      transition: background-color 0.3s;
     }
+
     button:hover {
-      background-color: #cc2f00;
+      background-color: rgba(0, 0, 0, 0.6);
     }
+
     #resultado {
-      font-size: 17px;
-      margin-top: 15px;
+      margin-top: 20px;
+      font-size: 20px;
+      background-color: rgba(0, 0, 0, 0.6);
+      padding: 20px;
+      border-radius: 10px;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Buscador de Entradas</h1>
-    <input type="text" id="buscarEntrada" placeholder="Buscar por número de entrada" />
-    <button onclick="buscarEntrada()">Buscar</button>
-    <div id="resultado"></div>
-    <hr style="margin:20px 0; border-color:#aaa;">
-    <input type="text" id="nuevaEntrada" placeholder="Nuevo número de entrada" />
-    <input type="text" id="nuevoNombre" placeholder="Apellido y Nombre" />
-    <input type="text" id="nuevoDNI" placeholder="DNI" />
-    <button onclick="agregarEntrada()">Agregar Entrada</button>
-  </div>
+  <h1>Buscador de Entradas</h1>
+  <input type="text" id="entrada" placeholder="Ingresá el número">
+  <button onclick="buscar()">Buscar</button>
+  <div id="resultado"></div>
 
   <script>
+    // Configuración de Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyBVW1OvkYXl5djQW8X4cTCY-hTQGvq28N0",
       authDomain: "prueba1-ceb44.firebaseapp.com",
       projectId: "prueba1-ceb44",
-      storageBucket: "prueba1-ceb44.firebasestorage.app",
+      storageBucket: "prueba1-ceb44.appspot.com",
       messagingSenderId: "54935650857",
       appId: "1:54935650857:web:dca2cefc0bdf5fcc9ed238",
       measurementId: "G-YN5SL8Z5KY"
     };
 
+    // Inicializar Firebase
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    function buscarEntrada() {
-      const numero = document.getElementById("buscarEntrada").value.trim();
-      const resultado = document.getElementById("resultado");
+    // Función para buscar la entrada
+    async function buscar() {
+      const numero = document.getElementById('entrada').value.trim();
+      const resultado = document.getElementById('resultado');
 
-      db.collection("entradas").doc(numero).get().then((doc) => {
+      try {
+        const docRef = db.collection("entradas").doc(numero);
+        const doc = await docRef.get();
+
         if (doc.exists) {
           const data = doc.data();
           resultado.innerHTML = `
-            <p><strong>Apellido y Nombre:</strong> ${data.nombre}</p>
-            <p><strong>DNI:</strong> ${data.dni}</p>`;
+            <p><strong>Apellido y Nombre:</strong> ${data["APELLIDO Y NOMBRE"]}</p>
+            <p><strong>DNI:</strong> ${data["DNI"]}</p>`;
         } else {
-          resultado.innerHTML = "<p style='color: #ffaaaa;'>Número de entrada no encontrado.</p>";
+          resultado.innerHTML = "<p style='color:red;'>Número de entrada no encontrado.</p>";
         }
-      }).catch((error) => {
-        resultado.innerHTML = "<p style='color: red;'>Error al buscar la entrada.</p>";
-        console.error("Error:", error);
-      });
-    }
-
-    function agregarEntrada() {
-      const numero = document.getElementById("nuevaEntrada").value.trim();
-      const nombre = document.getElementById("nuevoNombre").value.trim();
-      const dni = document.getElementById("nuevoDNI").value.trim();
-
-      if (!numero || !nombre || !dni) {
-        alert("Por favor completá todos los campos.");
-        return;
+      } catch (error) {
+        resultado.innerHTML = "<p style='color:red;'>Error al buscar los datos.</p>";
+        console.error("Error buscando entrada:", error);
       }
-
-      db.collection("entradas").doc(numero).set({
-        nombre: nombre,
-        dni: dni
-      }).then(() => {
-        alert("Entrada agregada correctamente.");
-        document.getElementById("nuevaEntrada").value = "";
-        document.getElementById("nuevoNombre").value = "";
-        document.getElementById("nuevoDNI").value = "";
-      }).catch((error) => {
-        alert("Error al agregar entrada.");
-        console.error("Error:", error);
-      });
     }
   </script>
 </body>
