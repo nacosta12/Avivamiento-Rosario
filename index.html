@@ -2,93 +2,117 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Rosario en Llamas - Buscador de Entradas</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Arial', sans-serif;
-            background-image: url('WhatsApp Image 2025-06-28 at 22.20.44.jpeg');
-            background-size: cover;
-            background-position: center;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Buscador de Entradas - Rosario en Llamas</title>
 
-        .contenedor {
-            background-color: rgba(255, 255, 255, 0.9);
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
-            text-align: center;
-        }
+  <!-- Fuente elegante -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
-        h1 {
-            margin-bottom: 20px;
-            color: #c62828;
-        }
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+      background-image: url('Rosario en llamas.jpeg');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
 
-        input, button {
-            padding: 12px;
-            font-size: 16px;
-            margin: 10px;
-            border-radius: 6px;
-            border: 1px solid #aaa;
-        }
+    .buscador-container {
+      background-color: rgba(0, 0, 0, 0.6);
+      padding: 30px;
+      border-radius: 15px;
+      width: 90%;
+      max-width: 420px;
+      box-shadow: 0 0 18px rgba(0,0,0,0.8);
+      text-align: center;
+    }
 
-        button {
-            background-color: #c62828;
-            color: white;
-            cursor: pointer;
-            border: none;
-        }
+    h1 {
+      margin-bottom: 20px;
+      font-weight: 600;
+      font-size: 26px;
+      letter-spacing: 1px;
+    }
 
-        button:hover {
-            background-color: #a41515;
-        }
+    input, button {
+      width: 100%;
+      padding: 12px;
+      font-size: 18px;
+      margin-bottom: 10px;
+      border: none;
+      border-radius: 8px;
+      font-family: 'Poppins', sans-serif;
+    }
 
-        #resultado {
-            margin-top: 20px;
-            font-size: 18px;
-            color: #333;
-        }
-    </style>
+    input {
+      background-color: #fff;
+      color: #000;
+    }
+
+    button {
+      background-color: #ff3c00;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #cc2f00;
+    }
+
+    #resultado {
+      font-size: 17px;
+      margin-top: 15px;
+    }
+
+    @media (max-width: 500px) {
+      .buscador-container {
+        padding: 20px;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="contenedor">
-        <h1>Rosario en Llamas - Buscador de Entradas</h1>
-        <input type="text" id="entrada" placeholder="Ingresá tu número de entrada">
-        <button onclick="buscar()">Buscar</button>
-        <div id="resultado"></div>
-    </div>
+  <div class="buscador-container">
+    <h1>Buscador de Entradas</h1>
+    <input type="text" id="entrada" placeholder="Ej: 1501" />
+    <button onclick="buscar()">Buscar</button>
+    <div id="resultado"></div>
+  </div>
 
-    <script>
-        const datos = {
-            "1501": {
-                "APELLIDO Y NOMBRE": "acosta",
-                "DNI": "44444444"
-            },
-            "1502": {
-                "APELLIDO Y NOMBRE": "gonzalez",
-                "DNI": "12345678"
-            }
-        };
+  <script>
+    const datos = {
+      "1501": {
+        "APELLIDO Y NOMBRE": "acosta",
+        "DNI": "44444444"
+      },
+      "1502": {
+        "APELLIDO Y NOMBRE": "gonzalez",
+        "DNI": "12345678"
+      }
+    };
 
-        function buscar() {
-            const numero = document.getElementById('entrada').value.trim();
-            const resultado = document.getElementById('resultado');
+    function buscar() {
+      const numero = document.getElementById('entrada').value.trim();
+      const resultado = document.getElementById('resultado');
 
-            if (datos[numero]) {
-                resultado.innerHTML = `
-                    <p><strong>Apellido y Nombre:</strong> ${datos[numero]['APELLIDO Y NOMBRE']}</p>
-                    <p><strong>DNI:</strong> ${datos[numero]['DNI']}</p>`;
-            } else {
-                resultado.innerHTML = "<p style='color:red;'>Número de entrada no encontrado.</p>";
-            }
-        }
-    </script>
+      if (datos[numero]) {
+        resultado.innerHTML = `
+          <p><strong>Apellido y Nombre:</strong> ${datos[numero]['APELLIDO Y NOMBRE']}</p>
+          <p><strong>DNI:</strong> ${datos[numero]['DNI']}</p>`;
+      } else {
+        resultado.innerHTML = "<p style='color: #ffaaaa;'>Número de entrada no encontrado.</p>";
+      }
+    }
+  </script>
 </body>
 </html>
