@@ -5,10 +5,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Buscador de Entradas - Rosario en Llamas</title>
-
-  <!-- Fuente elegante -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
   <style>
     body {
       margin: 0;
@@ -24,39 +23,34 @@
       justify-content: center;
       color: white;
     }
-
-    .buscador-container {
+    .container {
       background-color: rgba(0, 0, 0, 0.6);
       padding: 30px;
       border-radius: 15px;
       width: 90%;
-      max-width: 420px;
+      max-width: 450px;
       box-shadow: 0 0 18px rgba(0,0,0,0.8);
       text-align: center;
     }
-
     h1 {
       margin-bottom: 20px;
       font-weight: 600;
       font-size: 26px;
       letter-spacing: 1px;
     }
-
     input, button {
       width: 100%;
       padding: 12px;
-      font-size: 18px;
+      font-size: 16px;
       margin-bottom: 10px;
       border: none;
       border-radius: 8px;
       font-family: 'Poppins', sans-serif;
     }
-
     input {
       background-color: #fff;
       color: #000;
     }
-
     button {
       background-color: #ff3c00;
       color: white;
@@ -64,54 +58,83 @@
       cursor: pointer;
       transition: background-color 0.3s;
     }
-
     button:hover {
       background-color: #cc2f00;
     }
-
     #resultado {
       font-size: 17px;
       margin-top: 15px;
     }
-
-    @media (max-width: 500px) {
-      .buscador-container {
-        padding: 20px;
-      }
-    }
   </style>
 </head>
 <body>
-  <div class="buscador-container">
+  <div class="container">
     <h1>Buscador de Entradas</h1>
-    <input type="text" id="entrada" placeholder="Ej: 1501" />
-    <button onclick="buscar()">Buscar</button>
+    <input type="text" id="buscarEntrada" placeholder="Buscar por número de entrada" />
+    <button onclick="buscarEntrada()">Buscar</button>
     <div id="resultado"></div>
+    <hr style="margin:20px 0; border-color:#aaa;">
+    <input type="text" id="nuevaEntrada" placeholder="Nuevo número de entrada" />
+    <input type="text" id="nuevoNombre" placeholder="Apellido y Nombre" />
+    <input type="text" id="nuevoDNI" placeholder="DNI" />
+    <button onclick="agregarEntrada()">Agregar Entrada</button>
   </div>
 
   <script>
-    const datos = {
-      "1501": {
-        "APELLIDO Y NOMBRE": "acosta",
-        "DNI": "44444444"
-      },
-      "1502": {
-        "APELLIDO Y NOMBRE": "gonzalez",
-        "DNI": "12345678"
-      }
+    const firebaseConfig = {
+      apiKey: "AIzaSyBVW1OvkYXl5djQW8X4cTCY-hTQGvq28N0",
+      authDomain: "prueba1-ceb44.firebaseapp.com",
+      projectId: "prueba1-ceb44",
+      storageBucket: "prueba1-ceb44.firebasestorage.app",
+      messagingSenderId: "54935650857",
+      appId: "1:54935650857:web:dca2cefc0bdf5fcc9ed238",
+      measurementId: "G-YN5SL8Z5KY"
     };
 
-    function buscar() {
-      const numero = document.getElementById('entrada').value.trim();
-      const resultado = document.getElementById('resultado');
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
 
-      if (datos[numero]) {
-        resultado.innerHTML = `
-          <p><strong>Apellido y Nombre:</strong> ${datos[numero]['APELLIDO Y NOMBRE']}</p>
-          <p><strong>DNI:</strong> ${datos[numero]['DNI']}</p>`;
-      } else {
-        resultado.innerHTML = "<p style='color: #ffaaaa;'>Número de entrada no encontrado.</p>";
+    function buscarEntrada() {
+      const numero = document.getElementById("buscarEntrada").value.trim();
+      const resultado = document.getElementById("resultado");
+
+      db.collection("entradas").doc(numero).get().then((doc) => {
+        if (doc.exists) {
+          const data = doc.data();
+          resultado.innerHTML = `
+            <p><strong>Apellido y Nombre:</strong> ${data.nombre}</p>
+            <p><strong>DNI:</strong> ${data.dni}</p>`;
+        } else {
+          resultado.innerHTML = "<p style='color: #ffaaaa;'>Número de entrada no encontrado.</p>";
+        }
+      }).catch((error) => {
+        resultado.innerHTML = "<p style='color: red;'>Error al buscar la entrada.</p>";
+        console.error("Error:", error);
+      });
+    }
+
+    function agregarEntrada() {
+      const numero = document.getElementById("nuevaEntrada").value.trim();
+      const nombre = document.getElementById("nuevoNombre").value.trim();
+      const dni = document.getElementById("nuevoDNI").value.trim();
+
+      if (!numero || !nombre || !dni) {
+        alert("Por favor completá todos los campos.");
+        return;
       }
+
+      db.collection("entradas").doc(numero).set({
+        nombre: nombre,
+        dni: dni
+      }).then(() => {
+        alert("Entrada agregada correctamente.");
+        document.getElementById("nuevaEntrada").value = "";
+        document.getElementById("nuevoNombre").value = "";
+        document.getElementById("nuevoDNI").value = "";
+      }).catch((error) => {
+        alert("Error al agregar entrada.");
+        console.error("Error:", error);
+      });
     }
   </script>
 </body>
