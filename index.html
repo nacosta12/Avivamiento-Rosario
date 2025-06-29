@@ -9,7 +9,7 @@
             font-family: Arial, sans-serif;
             text-align: center;
             padding: 40px;
-            background-color: #f2f2f2;
+            background-color: #f8f8f8;
         }
         input, button {
             padding: 10px;
@@ -31,29 +31,33 @@
     <div id="resultado"></div>
 
     <script>
-        const datos = {{
-            "1501": {{
+        const datos = {
+            "1501": {
                 "APELLIDO Y NOMBRE": "acosta",
                 "DNI": "44444444"
-            }}
-        }};
+            },
+            "1502": {
+                "APELLIDO Y NOMBRE": "gonzalez",
+                "DNI": "12345678"
+            }
+        };
 
-        function buscar() {{
+        function buscar() {
             const numero = document.getElementById('entrada').value.trim();
             const resultado = document.getElementById('resultado');
 
-            if (datos[numero]) {{
+            if (datos[numero]) {
                 resultado.innerHTML = `
-                    <p><strong>Apellido y Nombre:</strong> ${{
+                    <p><strong>Apellido y Nombre:</strong> ${
                         datos[numero]['APELLIDO Y NOMBRE']
-                    }}</p>
-                    <p><strong>DNI:</strong> ${{
+                    }</p>
+                    <p><strong>DNI:</strong> ${
                         datos[numero]['DNI']
-                    }}</p>`;
-            }} else {{
+                    }</p>`;
+            } else {
                 resultado.innerHTML = "<p style='color:red;'>Número de entrada no encontrado.</p>";
-            }}
-        }}
+            }
+        }
     </script>
 </body>
 </html>
