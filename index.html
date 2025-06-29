@@ -1,105 +1,96 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Buscador de Entradas - Rosario en Llamas</title>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   <style>
     body {
       margin: 0;
       padding: 0;
-      background: url('Rosario%20en%20llamas.jpeg') no-repeat center center fixed;
+      font-family: 'Segoe UI', sans-serif;
+      background-image: url("Rosario%20en%20llamas.jpeg");
       background-size: cover;
-      font-family: Arial, sans-serif;
-      color: white;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      background-position: center;
+      background-repeat: no-repeat;
       height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+    }
+
+    .contenedor {
+      background-color: rgba(0, 0, 0, 0.7);
+      padding: 30px;
+      border-radius: 12px;
       text-align: center;
+      width: 90%;
+      max-width: 400px;
     }
 
     h1 {
-      font-size: 36px;
+      font-size: 28px;
       margin-bottom: 20px;
-      text-shadow: 2px 2px 5px black;
     }
 
     input, button {
       padding: 10px;
       font-size: 18px;
-      margin: 10px;
-      border-radius: 5px;
+      margin: 10px 5px;
       border: none;
-      outline: none;
+      border-radius: 6px;
     }
 
     input {
-      background-color: white;
-      color: black;
+      width: 60%;
     }
 
     button {
       background-color: white;
       color: black;
       cursor: pointer;
-    }
-
-    button:hover {
-      background-color: #ddd;
+      font-weight: bold;
     }
 
     #resultado {
       margin-top: 20px;
-      font-size: 20px;
-      background-color: rgba(0, 0, 0, 0.6);
-      padding: 20px;
-      border-radius: 10px;
+      font-size: 18px;
       color: white;
     }
   </style>
 </head>
 <body>
-  <h1>Buscador de Entradas</h1>
-  <input type="text" id="entrada" placeholder="Ingresá el número">
-  <button onclick="buscar()">Buscar</button>
-  <div id="resultado"></div>
+  <div class="contenedor">
+    <h1>Buscador de Entradas</h1>
+    <input type="text" id="entrada" placeholder="Ej: 1501" />
+    <button onclick="buscar()">Buscar</button>
+    <div id="resultado"></div>
+  </div>
 
   <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyBVW1OvkYXl5djQW8X4cTCY-hTQGvq28N0",
-      authDomain: "prueba1-ceb44.firebaseapp.com",
-      projectId: "prueba1-ceb44",
-      storageBucket: "prueba1-ceb44.appspot.com",
-      messagingSenderId: "54935650857",
-      appId: "1:54935650857:web:dca2cefc0bdf5fcc9ed238",
-      measurementId: "G-YN5SL8Z5KY"
+    const datos = {
+      "1501": {
+        "APELLIDO Y NOMBRE": "Acosta",
+        "DNI": "44444444"
+      },
+      "1502": {
+        "APELLIDO Y NOMBRE": "González",
+        "DNI": "12345678"
+      }
     };
 
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-
-    async function buscar() {
+    function buscar() {
       const numero = document.getElementById('entrada').value.trim();
       const resultado = document.getElementById('resultado');
-      try {
-        const doc = await db.collection("entradas").doc(numero).get();
-        if (doc.exists) {
-          const data = doc.data();
-          resultado.innerHTML = `
-            <p><strong>Apellido y Nombre:</strong> ${data["APELLIDO Y NOMBRE"]}</p>
-            <p><strong>DNI:</strong> ${data["DNI"]}</p>`;
-        } else {
-          resultado.innerHTML = "<p style='color:red;'>Número de entrada no encontrado.</p>";
-        }
-      } catch (error) {
-        resultado.innerHTML = "<p style='color:red;'>Error al buscar los datos.</p>";
-        console.error(error);
+
+      if (datos[numero]) {
+        resultado.innerHTML = `
+          <p><strong>Apellido y Nombre:</strong> ${datos[numero]["APELLIDO Y NOMBRE"]}</p>
+          <p><strong>DNI:</strong> ${datos[numero]["DNI"]}</p>`;
+      } else {
+        resultado.innerHTML = "<p style='color:red;'>Número de entrada no encontrado.</p>";
       }
     }
   </script>
 </body>
 </html>
-
