@@ -37,6 +37,7 @@
         border-radius: 4px;
         border: none;
         margin-bottom: 10px;
+        text-align: center;
       }
 
       button {
@@ -56,12 +57,28 @@
         font-size: 18px;
       }
     </style>
+
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
   </head>
+
   <body>
-    <div class="container">
+    <!-- LOGIN -->
+    <div class="container" id="login">
+      <h1>Acceso</h1>
+      <input
+        type="password"
+        id="clave"
+        placeholder="Contraseña"
+        onkeypress="if(event.key==='Enter'){verificarClave()}"
+      />
+      <br />
+      <button onclick="verificarClave()">Entrar</button>
+    </div>
+
+    <!-- BUSCADOR -->
+    <div class="container" id="buscador" style="display:none;">
       <h1>Buscador de Entradas</h1>
       <input
         type="text"
@@ -87,8 +104,18 @@
       firebase.initializeApp(firebaseConfig);
       const db = firebase.firestore();
 
+      function verificarClave() {
+        const clave = document.getElementById("clave").value;
+        if (clave === "Aviva2450") {
+          document.getElementById("login").style.display = "none";
+          document.getElementById("buscador").style.display = "block";
+        } else {
+          alert("Contraseña incorrecta");
+        }
+      }
+
       function buscar() {
-        const entrada = document.getElementById("entrada").value.trim();
+        const entrada = document.getElementById("entrada").value.trim().padStart(4, '0');
         const resultado = document.getElementById("resultado");
 
         if (!entrada) return;
@@ -99,8 +126,10 @@
           .then((doc) => {
             if (doc.exists) {
               const data = doc.data();
-              resultado.innerHTML = `<p><strong>Apellido y Nombre:</strong> ${data["APELLIDO Y NOMBRE"]}</p>
-                                      <p><strong>DNI:</strong> ${data["DNI"]}</p>`;
+              resultado.innerHTML = `
+                <p><strong>Apellido y Nombre:</strong> ${data["APELLIDO Y NOMBRE"]}</p>
+                <p><strong>DNI:</strong> ${data["DNI"]}</p>
+              `;
             } else {
               resultado.innerHTML =
                 "<p style='color: red;'>Entrada no encontrada</p>";
@@ -115,4 +144,3 @@
     </script>
   </body>
 </html>
-
