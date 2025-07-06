@@ -56,6 +56,16 @@
         margin-top: 20px;
         font-size: 18px;
       }
+
+      .estado-pendiente {
+        color: orange;
+        font-weight: bold;
+      }
+
+      .estado-confirmado {
+        color: lightgreen;
+        font-weight: bold;
+      }
     </style>
 
     <!-- Firebase -->
@@ -126,9 +136,18 @@
           .then((doc) => {
             if (doc.exists) {
               const data = doc.data();
+              const estado = data["ESTADO"] || "pendiente";
+              const claseEstado = estado === "confirmado" ? "estado-confirmado" : "estado-pendiente";
+
               resultado.innerHTML = `
                 <p><strong>Apellido y Nombre:</strong> ${data["APELLIDO Y NOMBRE"]}</p>
                 <p><strong>DNI:</strong> ${data["DNI"]}</p>
+                <p class="${claseEstado}">Estado: ${estado.toUpperCase()}</p>
+                ${
+                  estado === "pendiente"
+                    ? `<button onclick="confirmar('${entrada}')">Confirmar</button>`
+                    : ""
+                }
               `;
             } else {
               resultado.innerHTML =
@@ -139,6 +158,19 @@
             console.error("Error al buscar la entrada:", error);
             resultado.innerHTML =
               "<p style='color: red;'>Error al buscar los datos</p>";
+          });
+      }
+
+      function confirmar(id) {
+        db.collection("entradas")
+          .doc(id)
+          .update({ ESTADO: "confirmado" })
+          .then(() => {
+            buscar(); // Recarga los datos con el nuevo estado
+          })
+          .catch((error) => {
+            console.error("Error al confirmar:", error);
+            alert("Error al confirmar la entrada");
           });
       }
     </script>
