@@ -1,178 +1,113 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Buscador de Entradas</title>
-    <style>
-      body {
-        margin: 0;
-        font-family: 'Segoe UI', sans-serif;
-        background: url('Rosario%20en%20llamas.jpeg') no-repeat center center fixed;
-        background-size: cover;
-        color: white;
-        height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+<head>
+  <meta charset="UTF-8" />
+  <title>Buscador de Entradas</title>
+  <style>
+    /* ... (tu CSS existente) ... */
+
+    /* Estilos para el estado y botón */
+    .estado {
+      margin-top: 15px;
+      font-size: 18px;
+    }
+    .pendiente {
+      color: orange;
+      font-weight: bold;
+    }
+    .confirmado {
+      color: #00e676;
+      font-weight: bold;
+    }
+    .btn-confirmar {
+      margin-top: 10px;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      background-color: #00e676;
+      color: black;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .btn-confirmar:hover {
+      background-color: #00c853;
+    }
+  </style>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+</head>
+<body>
+  <div class="container" id="login">
+    <!-- ... tu código de login ... -->
+  </div>
+
+  <div class="container" id="buscador" style="display:none;">
+    <h1>Buscador de Entradas</h1>
+    <input type="text" id="entrada" placeholder="Número de entrada"
+      onkeypress="if(event.key==='Enter'){buscar()}">
+    <button onclick="buscar()">🔍</button>
+    <div id="resultado"></div>
+  </div>
+
+  <script>
+    const firebaseConfig = { /* tu config */ };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    function verificarClave() {
+      const clave = document.getElementById("clave").value;
+      if (clave === "Aviva2450") {
+        document.getElementById("login").style.display = "none";
+        document.getElementById("buscador").style.display = "block";
+      } else {
+        alert("Contraseña incorrecta");
       }
+    }
 
-      .container {
-        background-color: rgba(0, 0, 0, 0.7);
-        padding: 30px;
-        border-radius: 12px;
-        text-align: center;
-        width: 90%;
-        max-width: 400px;
-      }
+    function buscar() {
+      const entrada = document.getElementById("entrada").value.trim().padStart(4,'0');
+      const resultado = document.getElementById("resultado");
+      resultado.innerHTML = '';
 
-      h1 {
-        margin-bottom: 20px;
-        font-size: 26px;
-      }
+      if (!entrada) return;
 
-      input {
-        padding: 10px;
-        font-size: 16px;
-        width: 70%;
-        border-radius: 4px;
-        border: none;
-        margin-bottom: 10px;
-        text-align: center;
-      }
+      db.collection("entradas").doc(entrada).get()
+        .then(doc => {
+          if (doc.exists) {
+            const data = doc.data();
+            const estado = data.estado || "Pendiente";
+            resultado.innerHTML = `
+              <p><strong>Apellido y Nombre:</strong> ${data["APELLIDO Y NOMBRE"]}</p>
+              <p><strong>DNI:</strong> ${data["DNI"]}</p>
+              <p class="estado ${estado.toLowerCase()}">${estado}</p>
+              ${estado === "Pendiente" ? '<button class="btn-confirmar" onclick="confirmar(entrada)">Confirmar</button>' : ''}
+            `;
+          } else {
+            resultado.innerHTML = "<p style='color:red;'>Entrada no encontrada</p>";
+          }
+        })
+        .catch(e => {
+          console.error(e);
+          resultado.innerHTML = "<p style='color:red;'>Error en la búsqueda</p>";
+        });
+    }
 
-      button {
-        background: white;
-        border: none;
-        padding: 10px;
-        border-radius: 4px;
-        cursor: pointer;
-      }
-
-      button:hover {
-        background: #ddd;
-      }
-
-      #resultado {
-        margin-top: 20px;
-        font-size: 18px;
-      }
-
-      .estado-pendiente {
-        color: orange;
-        font-weight: bold;
-      }
-
-      .estado-confirmado {
-        color: lightgreen;
-        font-weight: bold;
-      }
-    </style>
-
-    <!-- Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
-  </head>
-
-  <body>
-    <!-- LOGIN -->
-    <div class="container" id="login">
-      <h1>Acceso</h1>
-      <input
-        type="password"
-        id="clave"
-        placeholder="Contraseña"
-        onkeypress="if(event.key==='Enter'){verificarClave()}"
-      />
-      <br />
-      <button onclick="verificarClave()">Entrar</button>
-    </div>
-
-    <!-- BUSCADOR -->
-    <div class="container" id="buscador" style="display:none;">
-      <h1>Buscador de Entradas</h1>
-      <input
-        type="text"
-        id="entrada"
-        placeholder="Número de entrada"
-        onkeypress="if(event.key==='Enter'){buscar()}"
-      />
-      <button onclick="buscar()">🔍</button>
-      <div id="resultado"></div>
-    </div>
-
-    <script>
-      const firebaseConfig = {
-        apiKey: "AIzaSyBVW1OvkYXl5djQW8X4cTCY-hTQGvq28N0",
-        authDomain: "prueba1-ceb44.firebaseapp.com",
-        projectId: "prueba1-ceb44",
-        storageBucket: "prueba1-ceb44.appspot.com",
-        messagingSenderId: "54935650857",
-        appId: "1:54935650857:web:dca2cefc0bdf5fcc9ed238",
-        measurementId: "G-YN5SL8Z5KY",
-      };
-
-      firebase.initializeApp(firebaseConfig);
-      const db = firebase.firestore();
-
-      function verificarClave() {
-        const clave = document.getElementById("clave").value;
-        if (clave === "Aviva2450") {
-          document.getElementById("login").style.display = "none";
-          document.getElementById("buscador").style.display = "block";
-        } else {
-          alert("Contraseña incorrecta");
-        }
-      }
-
-      function buscar() {
-        const entrada = document.getElementById("entrada").value.trim().padStart(4, '0');
-        const resultado = document.getElementById("resultado");
-
-        if (!entrada) return;
-
-        db.collection("entradas")
-          .doc(entrada)
-          .get()
-          .then((doc) => {
-            if (doc.exists) {
-              const data = doc.data();
-              const estado = data["ESTADO"] || "pendiente";
-              const claseEstado = estado === "confirmado" ? "estado-confirmado" : "estado-pendiente";
-
-              resultado.innerHTML = `
-                <p><strong>Apellido y Nombre:</strong> ${data["APELLIDO Y NOMBRE"]}</p>
-                <p><strong>DNI:</strong> ${data["DNI"]}</p>
-                <p class="${claseEstado}">Estado: ${estado.toUpperCase()}</p>
-                ${
-                  estado === "pendiente"
-                    ? `<button onclick="confirmar('${entrada}')">Confirmar</button>`
-                    : ""
-                }
-              `;
-            } else {
-              resultado.innerHTML =
-                "<p style='color: red;'>Entrada no encontrada</p>";
-            }
-          })
-          .catch((error) => {
-            console.error("Error al buscar la entrada:", error);
-            resultado.innerHTML =
-              "<p style='color: red;'>Error al buscar los datos</p>";
-          });
-      }
-
-      function confirmar(id) {
-        db.collection("entradas")
-          .doc(id)
-          .update({ ESTADO: "confirmado" })
-          .then(() => {
-            buscar(); // Recarga los datos con el nuevo estado
-          })
-          .catch((error) => {
-            console.error("Error al confirmar:", error);
-            alert("Error al confirmar la entrada");
-          });
-      }
-    </script>
-  </body>
+    function confirmar() {
+      const entrada = document.getElementById("entrada").value.trim().padStart(4,'0');
+      const resultado = document.getElementById("resultado");
+      db.collection("entradas").doc(entrada).update({ estado: "Confirmado" })
+        .then(() => {
+          resultado.querySelector('.estado').textContent = "Confirmado";
+          resultado.querySelector('.estado').className = "estado confirmado";
+          resultado.querySelector('.btn-confirmar').remove();
+        })
+        .catch(e => {
+          console.error(e);
+          alert("Error actualizando estado");
+        });
+    }
+  </script>
+</body>
 </html>
