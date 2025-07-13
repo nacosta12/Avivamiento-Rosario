@@ -36,17 +36,32 @@
       text-align: center;
     }
 
-    button {
-      background: white;
-      border: none;
-      padding: 10px;
-      border-radius: 4px;
-      cursor: pointer;
-      margin-top: 10px;
+    .busqueda {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
     }
 
-    button:hover {
-      background: #ddd;
+    .busqueda input {
+      width: 70%;
+      margin: 0;
+    }
+
+    #botonBuscar {
+      background: #333;
+      border: none;
+      border-radius: 50px;
+      padding: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s ease;
+    }
+
+    #botonBuscar:hover {
+      background: #555;
     }
 
     .estado-pendiente {
@@ -68,11 +83,13 @@
       display: none;
     }
   </style>
+
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
 </head>
 <body>
+  <!-- Login -->
   <div class="container" id="loginBox">
     <h2>Iniciar sesión</h2>
     <input type="email" id="email" placeholder="Correo electrónico">
@@ -81,14 +98,20 @@
     <div id="errorLogin" style="color: red; margin-top: 10px;"></div>
   </div>
 
+  <!-- Buscador -->
   <div class="container hidden" id="mainBox">
     <h1>Buscador de Entradas</h1>
-    <input type="text" id="entrada" placeholder="Número de entrada" onkeypress="if(event.key==='Enter'){buscar()}">
-    <button onclick="buscar()">🔍</button>
+    <div class="busqueda">
+      <input type="text" id="entrada" placeholder="Número de entrada" onkeypress="if(event.key==='Enter'){buscar()}">
+      <button id="botonBuscar" onclick="buscar()" title="Buscar">
+        <img src="https://img.icons8.com/ios-glyphs/30/ffffff/search--v1.png" alt="Buscar" style="width: 24px; height: 24px;">
+      </button>
+    </div>
     <div id="resultado"></div>
     <button onclick="logout()" style="margin-top:20px;">Cerrar sesión</button>
   </div>
 
+  <!-- Script Firebase -->
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyBVW1OvkYXl5djQW8X4cTCY-hTQGvq28N0",
@@ -118,7 +141,7 @@
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
       const errorBox = document.getElementById("errorLogin");
-      errorBox.textContent = ''; // Limpiar errores previos
+      errorBox.textContent = '';
 
       auth.signInWithEmailAndPassword(email, password)
         .catch(err => {
@@ -169,3 +192,4 @@
   </script>
 </body>
 </html>
+
