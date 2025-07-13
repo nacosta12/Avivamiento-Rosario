@@ -92,7 +92,7 @@
     const firebaseConfig = {
       apiKey: "AIzaSyBVW1OvkYXl5djQW8X4cTCY-hTQGvq28N0",
       authDomain: "prueba1-ceb44.firebaseapp.com",
-      projectId: "prueba1-ceb44",
+      projectId: "prueba1-ceb44", // ← ESTA LÍNEA ES LA CLAVE QUE FALTABA
       storageBucket: "prueba1-ceb44.appspot.com",
       messagingSenderId: "54935650857",
       appId: "1:54935650857:web:dca2cefc0bdf5fcc9ed238",
@@ -127,39 +127,5 @@
     function buscar() {
       const entrada = document.getElementById("entrada").value.trim().padStart(4, '0');
       const resultado = document.getElementById("resultado");
-      resultado.innerHTML = '';
-
-      if (!entrada) return;
-
-      db.collection("entradas").doc(entrada).get()
-        .then(doc => {
-          if (doc.exists) {
-            const data = doc.data();
-            const estado = data.ESTADO || "pendiente";
-            const clase = estado === "confirmado" ? "estado-confirmado" : "estado-pendiente";
-            resultado.innerHTML = `
-              <p><strong>Apellido y Nombre:</strong> ${data["APELLIDO Y NOMBRE"]}</p>
-              <p><strong>DNI:</strong> ${data["DNI"]}</p>
-              <p class="${clase}">Estado: ${estado.toUpperCase()}</p>
-              ${estado === "pendiente" ? '<button onclick="confirmar()">Confirmar</button>' : ''}
-            `;
-          } else {
-            resultado.innerHTML = "<p style='color:red;'>Entrada no encontrada</p>";
-          }
-        })
-        .catch(e => {
-          console.error(e);
-          resultado.innerHTML = "<p style='color:red;'>Error en la búsqueda</p>";
-        });
-    }
-
-    function confirmar() {
-      const entrada = document.getElementById("entrada").value.trim().padStart(4, '0');
-      db.collection("entradas").doc(entrada).update({ ESTADO: "confirmado" })
-        .then(() => buscar())
-        .catch(err => alert("Error al confirmar: " + err.message));
-    }
-  </script>
-</body>
-</html>
+      resultado.innerH
 
